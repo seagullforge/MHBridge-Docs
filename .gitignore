@@ -1,0 +1,9 @@
+.vs/
+.idea/
+.vscode/
+*.DotSettings.user
+*.suo
+*.user
+.DS_Store
+Thumbs.db
+*.psd
