@@ -1,4 +1,4 @@
-# MHBridge for Unity
+# MHBridge Importer
 
 Get MHBridge on the [Unity Asset Store](https://assetstore.unity.com/packages/slug/403996).
 

@@ -62,19 +62,31 @@ and nothing else, skipping the package changes nothing.
 
 ### Install the Unity packages
 
+MHBridge does not install packages for you. The Hair Tool lists what it needs and where to get it,
+and you add each package in Package Manager.
+
 Open **Tools > MHBridge > Hair > Hair Tool**. In a project that has neither the hair nor the Alembic
 package, the window is the setup page: one row per package, with what it is for, its identifier, and
-an **Install** button.
+a **Copy** button. The Alembic row also has an **Open** button.
 
-![The MH Hair Tool window showing the package setup page, with a row per package and the Install all missing button](images/06-hair/02-packages-setup-panel.png)
+![The MH Hair Tool window showing the package setup page, with a row per package and the Package Manager button](images/06-hair/02-packages-setup-panel.png)
 
-1. Click **Install all missing**. Package Manager resolves all three in one operation.
-2. Wait for the recompile to finish.
-3. Reopen the Hair Tool. The setup page is replaced by the tool itself.
+To add the packages, follow these steps:
 
-To take only some of them, use the **Install** button on a row instead. Skip digital-human and the
-window still opens, with a banner at the top naming what is missing and a **Packages** foldout
-holding the same rows — so you can add it later without going to look for the URL again.
+1. On the **Demo Team Hair System** row, click **Copy**.
+2. Click **Package Manager**.
+3. In Package Manager, select **+ > Add package from git URL**.
+4. Paste the URL, and click **Add**.
+5. Optional: To add skin attachment, repeat steps 1–4 for the **Demo Team Digital Human** row.
+6. In the Hair Tool, on the **Alembic** row, click **Open**. Package Manager opens on the Alembic
+   package.
+7. Click **Install**.
+8. Wait for the recompile to finish, and then reopen the Hair Tool. The setup page is replaced by the
+   tool itself.
+
+Skip digital-human and the window still opens, with a banner at the top naming what is missing and a
+**Packages** foldout holding the same rows — so you can add it later without going to look for the
+URL again.
 
 Two of the three rows point at MHBridge forks rather than at Unity's own repositories:
 
@@ -90,8 +102,9 @@ Both keep Unity's [Unity Companion License](https://unity.com/legal/licenses/uni
 
 A git URL is resolved by Package Manager running a `git` client of its own, so on a machine that has
 none the install fails with an error instead of a download. Either install
-[Git for Windows](https://git-scm.com/downloads), restart Unity, and use **Install all missing** as
-above, or take the package as a folder:
+[Git for Windows](https://git-scm.com/downloads), restart Unity, and add the package from its git URL
+as described in [Install the Unity packages](#install-the-unity-packages), or take the package as a
+folder:
 
 1. Open the fork on GitHub and download the repository as a ZIP archive.
 2. Extract it, and rename the extracted folder to the package name — `com.unity.demoteam.hair`.
@@ -780,8 +793,8 @@ right meshes. Its cost is memory and nothing else — see the warning in
 
 | Symptom | Cause and fix |
 |---|---|
-| The Hair Tool shows a page of packages instead of the tool | The hair or the Alembic package is missing. Click **Install all missing**, wait for the recompile, and reopen the window. |
-| **Install all missing** fails with a git error | Package Manager needs a `git` client of its own to resolve a git URL. Install Git, restart Unity, or take the package as a folder — see [Install a package without git](#install-a-package-without-git). |
+| The Hair Tool shows a page of packages instead of the tool | The hair or the Alembic package is missing. Add it in Package Manager as described in [Install the Unity packages](#install-the-unity-packages), wait for the recompile, and reopen the window. |
+| **Add package from git URL** fails with a git error | Package Manager needs a `git` client of its own to resolve a git URL. Install Git, restart Unity, or take the package as a folder — see [Install a package without git](#install-a-package-without-git). |
 | The tool opens on `No usable hair profiles were found` | The groom assets are not unpacked. Click **Unpack GroomAdditional.unitypackage**. |
 | A groom came in on the wrong profile — eyebrows treated as scalp hair, for example | The `.abc` file name carries none of the keywords, so the fallback profile was used. Rename the file, add the keyword to the profile you want, or assign the profile by hand in the entry. |
 | The console reports `Unable to resolve strand diameters`, or the report says `no 'width'` | The `.abc` file carries no `width` param. Re-export it with **Export Widths** on. |
