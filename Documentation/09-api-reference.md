@@ -47,7 +47,7 @@ The package has four core assemblies and a separate demo assembly.
 | `MHBridge.Runtime` | `Assets/MHBridge/Runtime` | The character components, the Face Board, the ARKit data types, and the native layer. |
 | `MHBridge.Editor` | `Assets/MHBridge/Editor` | Importers, the character builder, the tools, the validator. |
 | `MHBridge.Hair.Runtime` | `Assets/MHBridge/Hair/Runtime` | `MHHairLodHelper` and `MHHairTopologyPin`. |
-| `MHBridge.Hair.Editor` | `Assets/MHBridge/Hair/Editor` | The Hair Tool and the Cards Tool. |
+| `MHBridge.Hair.Editor` | `Assets/MHBridge/Hair/Editor` | The Hair Tool, the Cards Tool, and the Scalp Mask Tool. |
 | `MHBridge.Demo` | `Assets/MHBridge/Demo/Scripts` | `MHDemoController`, which validates the demo character, drives its buttons and camera, and binds the Face Board. |
 
 Both hair assemblies compile in any project. What depends on `com.unity.demoteam.hair` is the code
@@ -665,6 +665,11 @@ profile, not writing code.
   GameObject presetNode, MHHairProfile profile)` links that entire cards node to the profile's
   grooms. `Link(GameObject character, GameObject groomInstance, GameObject cards)` links one
   groom, and `ApplyLod0State(GameObject character, GameObject cards)` applies initial visibility.
+- The [scalp mask](06-hair.md#darken-the-scalp-under-the-hair-optional) can be built without the
+  window. `MHHairScalpMask.RootUVs()` reads a hair asset's root UVs, and `DetectFlipV()` checks them
+  against the head mesh. `MHScalpMaskCanvas.RenderLayer()` renders one groom with an
+  `MHScalpMaskLayerSettings`, `MHHairScalpMask.CombineMax()` merges the layers, and
+  `MHHairScalpMask.Save()` writes the PNG.
 
 High quality lines have a scripted route too, in `MHBridge.Editor.Validation`, for a project that
 sets itself up from a build script rather than from the window:
@@ -726,7 +731,9 @@ Everything public, by assembly.
 **`MHBridge.Hair.Editor`, namespace `MHBridge.Editor.Hair`.** Experimental: `MHHairProfile`,
 `MHHairImportPipeline` with its `Options`, `MHHairRig`, `MHHairPackages`,
 `MHPackageRequirement`, `MHHairLodMode`, `MHHairSingleLodRoute`, `MHCardsBuilder`,
-`MHCardsResult`, and `MHHairCardsLink`. See [For programmers](06-hair.md#for-programmers).
+`MHCardsResult`, `MHHairCardsLink`, and for the scalp mask `MHScalpMaskWindow`, `MHHairScalpMask`,
+`MHScalpMaskCanvas`, and `MHScalpMaskLayerSettings`. See
+[For programmers](06-hair.md#for-programmers).
 
 ---
 

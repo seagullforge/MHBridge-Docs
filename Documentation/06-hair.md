@@ -28,6 +28,7 @@ You supply the groom or cards files; the package includes no hairstyles or chara
 - [Step 7 — Hair cards (optional)](#step-7--hair-cards-optional)
 - [Tune the look](#tune-the-look)
 - [What the import added to your character](#what-the-import-added-to-your-character)
+- [Darken the scalp under the hair (optional)](#darken-the-scalp-under-the-hair-optional)
 - [Limits](#limits)
 - [Troubleshooting](#troubleshooting)
 - [For programmers](#for-programmers)
@@ -179,7 +180,7 @@ to be in it:
 | An **Ogawa** archive | The only Alembic container the tool reads. Anything else is reported and skipped. |
 | **Curves**, the `AbcGeom_Curve` schema | The strands themselves. A file with no curve schema holds no hair, and the tool refuses it. |
 | Per-vertex **`width`** | Strand diameter and tapering resolve from it. Without it the hair package falls back to a uniform diameter, and three settings — `strandDiameterValue`, `tipScaleValue`, and `tipScaleOffsetValue` — have to be tuned by hand on every import. |
-| Root **`uv`** | The root UVs, which carry per-strand color and growth variation. Without them the tool resolves roots against the head mesh instead. |
+| Root **`uv`** | The root UVs, which carry per-strand color and growth variation and place the [scalp mask](#darken-the-scalp-under-the-hair-optional). Without them the tool resolves roots against the head mesh instead. |
 
 If you already have a groom `.abc` file from somewhere else, go straight to
 [Step 2](#step-2--bring-the-abc-files-into-unity).
@@ -770,6 +771,60 @@ On each entry, in the order the decisions are made:
 right meshes. Its cost is memory and nothing else — see the warning in
 [Strands plus cards](#strands-plus-cards).
 
+## Darken the scalp under the hair (optional)
+
+In Unreal, the skin under a MetaHuman groom reads darker than the bare skin around it, because the
+skin material darkens it with a mask built from the groom's roots. The **Scalp Mask Tool** builds
+the same mask for your character from the grooms you already imported, and assigns it to the head
+materials.
+
+![The Scalp Mask Tool with groom layers on the left, the combined preview on the right, and the Output section below](images/06-hair/25-scalp-mask-tool.png)
+
+To build and apply the mask, follow these steps:
+
+1. Import the grooms with the Hair Tool, as described in [Step 6](#step-6--import-and-read-the-report).
+2. Select **Tools > MHBridge > Hair > Scalp Mask Tool**. With a character selected in the
+   Hierarchy, the window opens already pointed at it.
+3. Check **Character (MHFace)** and **Head mesh**. The tool finds every groom on the character and
+   lists it under **Grooms**. After you import more grooms, click **Rescan**.
+4. Optional: Tune each groom, as described in the following table. Click a groom's thumbnail to
+   inspect it in the large preview, and click **Show combined** to return to the combined mask.
+5. In **Output**, choose **Size**, and check **Folder** and **On re-run**. They are the same
+   settings that the Hair Tool uses.
+6. Leave **Apply to materials** on, and click **Generate mask**.
+
+The mask is saved as `<Folder>/Masks/<Character>_ScalpMask.png`, and with **Apply to materials** on,
+it is assigned to the head materials listed under the checkbox. To change the strength and color of
+the darkening, see [Scalp mask](05-materials.md#scalp-mask).
+
+![The same head with the hair hidden, before and after the scalp mask is applied](images/06-hair/26-scalp-mask-compare.png)
+
+Each groom is a separate layer with its own settings. The combined mask keeps the brightest layer
+at each pixel.
+
+| Setting | Default | What it does |
+|---|---|---|
+| The checkbox beside the groom name | on | Includes the groom in the combined mask. |
+| **Blur** | `8` | Merges single roots into a smooth area, in pixels of a 2048 mask. Raise it when a sparse groom, such as a mustache, breaks into patches. |
+| **Density gain** | `3` | How fast root density reaches white. Raise it when thinner areas come out too faint. |
+| **Edge fade** | `8` | The width of the fade inside the groom's edge, in pixels of a 2048 mask. The fade ends at black on the outermost roots. `0` turns it off. |
+| **Edge threshold** | `0.25` | The share of the groom's typical density below which an area counts as outside the groom. Lower it when the fade cuts holes at a part. |
+| **Intensity** | `1` | The brightness of the whole layer. |
+
+**Copy to others** copies the settings of one groom to every other groom, and **Reset** restores
+the defaults.
+
+The previews render at 512 pixels, so a slider responds immediately. **Generate mask** renders at
+the **Size** you chose. In the combined preview, the mask is drawn in white over the head's base
+color. In a groom thumbnail, it is drawn over the head's UV layout in dark blue.
+
+> [!NOTE]
+> Only the face skin materials for LOD 0 and LOD 1 support the scalp mask. Farther away, the
+> darkening is too small to see, so the shaders for the deeper LODs leave it out.
+
+The mask does not update itself. After you re-import a groom or change its settings, click
+**Generate mask** again.
+
 ## Limits
 
 - **Strand hair has no cheap far LOD.** The three modes in [Step 5](#step-5--pick-a-lod-mode) are
@@ -812,6 +867,10 @@ right meshes. Its cost is memory and nothing else — see the warning in
 | The groom works in the scene and not in a prefab | Skin-attached hair and the head have to be in one prefab. Turn **Save character as prefab** on and import again. |
 | The groom rests in place while the head moves | Its profile names no attach bone and no skin attachment. Tick **Override attach** and set **Attach bone** to `head`, which is the default for scalp hair. |
 | The output folder is filling up with numbered copies | **On re-run** is set to `CreateNew`. Switch it to `OverrideExisted`. |
+| The Scalp Mask Tool reports `No head material supports the scalp mask` | The head materials use a shader without the scalp mask. Use the shipped face skin materials, or add the subgraph to your shader as described in [Scalp mask](05-materials.md#scalp-mask). |
+| The Scalp Mask Tool reports `Cannot apply: the head materials are sub-assets of the character` | The materials are still embedded in the character asset. [Extract the materials](04-import-reference.md#extract-preview-versus-production), and then click **Generate mask** again. |
+| The scalp mask does not line up with the hair | Read the **Root UV orientation** line in the Scalp Mask Tool. If it reports `neither matches the head UV layout`, the root UVs do not belong to this head. Re-export the groom with **Export Root UV** on, and check **Head mesh**. |
+| The scalp mask has holes along a part | Lower **Edge threshold** on that groom, or set **Edge fade** to `0`. |
 
 The general troubleshooting table is in the
 [API reference](09-api-reference.md).

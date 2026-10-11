@@ -8,8 +8,8 @@ The shipped settings use the following materials for each part and LOD:
 | Role | Material template | Shader graph | Visible effect |
 |---|---|---|---|
 | Body | `MH_Body.mat` | `MHBody_Graph` | Body skin color, surface detail, and surface shading. |
-| Face skin, LOD0 | `Head/MHSkin_Animated_StuckLit.mat` | `MHSkin_Animated_StuckLit_Graph` | Skin shading with animated wrinkle maps. |
-| Face skin, LOD1 | `Head/MHSkin_AnimatedSS.mat` | `MHSkin_AnimatedSS_Graph` | Skin scattering with animated wrinkle maps. |
+| Face skin, LOD0 | `Head/MHSkin_Animated_StuckLit.mat` | `MHSkin_Animated_StuckLit_Graph` | Skin shading with animated wrinkle maps and the scalp mask. |
+| Face skin, LOD1 | `Head/MHSkin_AnimatedSS.mat` | `MHSkin_AnimatedSS_Graph` | Skin scattering with animated wrinkle maps and the scalp mask. |
 | Face skin, LOD2–3 | `Head/MHSkin_SS.mat` | `MHSkin_SS_Graph` | Skin scattering without animated wrinkle maps. |
 | Face skin, LOD4 and deeper | `Head/MHSkin_NoSS.mat` | `MHSkin_NoSS_Graph` | Skin shading without subsurface scattering or animated wrinkle maps. |
 | Teeth | `MH_Teeth.mat` | HDRP/Lit | Tooth color, surface detail, and scattering. |
@@ -33,6 +33,7 @@ A bare DNA file carries no textures, so its materials retain the templates' text
 - [Body](#body)
 - [Face skin](#face-skin)
   - [Wrinkle maps](#wrinkle-maps)
+  - [Scalp mask](#scalp-mask)
 - [Eyes](#eyes)
   - [Sclera](#sclera)
   - [Iris](#iris)
@@ -74,6 +75,46 @@ With **Apply Wrinkle Maps** enabled on `MHFace`, MHBridge passes these weights t
 shader, which blends the wrinkle maps.
 If you create a custom material or shader, provide compatible wrinkle inputs and blending,
 using the shipped `MHSkin_AnimatedSS_Graph` shader as a reference.
+
+### Scalp mask
+
+The LOD 0 and LOD 1 face skin materials darken the skin under the hair and dull its shine with a
+mask that the [Scalp Mask Tool](06-hair.md#darken-the-scalp-under-the-hair-optional) builds from
+the groom roots.
+Without a mask the materials look as before, so you can ignore these properties on a character
+without hair.
+
+![The scalp mask properties in the face skin material Inspector](images/05-materials/05-scalp-mask-properties.png)
+
+| Parameter | Shader property | Shipped value | Effect and use |
+|---|---|---|---|
+| **ScalpMask** | `_ScalpMask` | None | The mask. The Scalp Mask Tool assigns it. White areas are darkened, and black areas are left alone. |
+| **ScalpTint** | `_ScalpTint` | Gray `0.33` | The color that the skin under the hair is multiplied by. Darker values darken more. A slight tint toward the hair color reads as hair growing from under the skin. |
+| **ScalpSaturation** | `_ScalpSaturation` | `0.8` | The saturation of the skin under the hair. `1` leaves it unchanged, and lower values make it grayer. |
+| **ScalpMaskStrength** | `_ScalpMaskStrength` | `1` | The overall strength of the effect. `0` turns it off without removing the mask. |
+| **ScalpMaskPower** | `_ScalpMaskPower` | `1` | The falloff of the mask. Values above `1` pull the darkening inside the hairline and soften its edge. Values below `1` spread it toward the edge. |
+| **ScalpMaskMipBias** | `_ScalpMaskMipBias` | `1` | Extra softening when the mask is sampled. Each step doubles the blur. |
+| **ScalpSmoothness** | `_ScalpSmoothness` | `0.5` | The factor that the smoothness under the hair is multiplied by. `1` leaves it unchanged. Lower values spread the highlight wider rather than remove it, so lower **ScalpSpecular** first. |
+| **ScalpSpecular** | `_ScalpSpecular` | `0.5` | The factor that the specular reflectance under the hair is multiplied by. Lower values dim the highlight without changing its shape. LOD 0 only: the LOD 1 shader has no specular input. |
+
+The materials for LOD 2 and deeper have no scalp mask on purpose. At that distance the darkening
+is too small to see, and leaving it out keeps those shaders cheaper.
+
+To add the scalp mask to a shader of your own, follow these steps:
+
+1. Add the `Assets/MHBridge/Shaders/MHScalpMask.shadersubgraph` node to the graph.
+2. Connect your final base color to its **BaseColor** input, and its **FinalColor** output to the
+   **Base Color** block.
+3. Connect your smoothness to its **Smoothness** input, and its **Smoothness** output to the
+   **Smoothness** block.
+4. Optional: Connect your specular to its **Specular** input, and its **Specular** output to the
+   **Specular** block. Skip this step if the shader has no **Specular** block.
+5. Connect material properties to its other inputs. Give the texture property the reference name
+   `_ScalpMask`, and set its default to **Black**, so that a material without a mask stays
+   unchanged.
+
+The Scalp Mask Tool assigns the mask to every head material that has a `_ScalpMask` property. The
+subgraph's **Mask** output carries the final mask, if you want to drive other inputs with it.
 
 ## Eyes
 
