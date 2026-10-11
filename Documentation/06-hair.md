@@ -102,7 +102,7 @@ Both keep Unity's [Unity Companion License](https://unity.com/legal/licenses/uni
 
 A git URL is resolved by Package Manager running a `git` client of its own, so on a machine that has
 none the install fails with an error instead of a download. Either install
-[Git for Windows](https://git-scm.com/downloads), restart Unity, and add the package from its git URL
+[Git for your operating system](https://git-scm.com/downloads), restart Unity, and add the package from its git URL
 as described in [Install the Unity packages](#install-the-unity-packages), or take the package as a
 folder:
 
@@ -786,7 +786,7 @@ right meshes. Its cost is memory and nothing else — see the warning in
 - **High quality lines need Unity 6.** HDRP 17 is where the strand width reaches the line renderer,
   so below Unity 6 the renderer is not offered and MHBridge never proposes it. See
   [High quality lines](#high-quality-lines-unity-6).
-- The package's own limits apply as everywhere else, so Windows x86_64 and HDRP. See
+- The package's platform requirements and HDRP requirement apply to hair as well. See
   [Requirements and limitations](04-import-reference.md#requirements-and-limitations).
 
 ## Troubleshooting

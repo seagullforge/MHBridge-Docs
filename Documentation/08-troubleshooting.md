@@ -10,8 +10,11 @@ could resolve some of the errors instantly:
    `[MHBody]`, `[MHFaceClipDriver]`, `[FaceBoard]`, `[MHHairTopologyPin]` — so a prefix is a
    search term.
 
-The package renders under HDRP and nothing else, and it runs on Windows x86_64, in the editor and in
-Standalone Windows 64-bit builds. These are limitations, not defects.
+MHBridge requires HDRP. Editor platforms are Windows, macOS, and Linux; Player targets
+are PC (Windows, macOS, Linux) and consoles*.
+
+*Console builds require the adapter source kit and your platform SDK; they have not
+been built or tested with console SDKs. See [Build for consoles](11-console-builds.md).
 
 ## On this page
 
@@ -64,7 +67,7 @@ For iris boundaries, inverted eye normals, and pupil animation, see [Visual prob
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| `DllNotFoundException` or `EntryPointNotFoundException` on import or on Play | `MHBridgeRig.dll` did not reach the project, or the target is not Windows x86_64 | Check `Assets/MHBridge/Plugins/x86_64/MHBridgeRig.dll` and its import settings. The package is Windows 64-bit only. |
+| `DllNotFoundException` or `EntryPointNotFoundException` on import or on Play | The native adapter is missing, cannot load for the selected platform/architecture, or does not match the managed bindings | Check the matching library under `Assets/MHBridge/Plugins`: `x86_64/MHBridgeRig.dll` (Windows), `Linux/x86_64/libMHBridgeRig.so` (Linux), or `macOS/libMHBridgeRig.dylib` (macOS). Check its Plugin Importer settings and use native and managed files from the same package release. For consoles, follow the build guide linked at the start of this page. |
 | After a package update the character does not re-import, and the plugin behaves like the old one | Unity keeps a native plugin loaded for as long as the editor runs | Restart the editor, then re-import the DLL. |
 | The face moves, but the correctives land on the wrong shapes: crooked lips, wrong eyelids | The Unity-frame to DNA-channel table is broken | Re-import the character, which bakes the table. |
 | No textures, and a warning per map in the Console | The `.dcc` was stripped of its source maps and the `<Name>_Textures` folder was then deleted. A stripped `.dcc` is not self-contained | Restore the texture folder, or re-import from the original DCC export. |

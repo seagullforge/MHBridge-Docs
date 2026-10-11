@@ -190,11 +190,12 @@ fractions, the overlay keeps its proportions at any resolution.
 
 > [!NOTE]
 > A build needs nothing else. `FaceBoardPanel` is an ordinary runtime component in the
-> `MHBridge.Runtime` assembly and the layout is an ordinary asset, so a Standalone Windows build
+> `MHBridge.Runtime` assembly and the layout is an ordinary asset, so a Player build
 > that references the prefab ships both.
 
-**Save Pose** and **Load Pose** work in a build as well. In a Windows build they open the standard
-Windows file dialog, and the first dialog of a session starts in the player's data folder
+**Save Pose** and **Load Pose** are available in the Editor on all desktop platforms
+and in Windows Players. Other Players do not show these buttons. In a Windows Player
+they open the standard Windows file dialog, and the first dialog of a session starts in the player's data folder
 (`Application.persistentDataPath`). The dialog is modal: the game stops updating until you close
 it.
 

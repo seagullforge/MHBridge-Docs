@@ -559,10 +559,14 @@ levels and the question comes back. Dismissals are stored per project and per us
 | Unity | 2022.3 LTS minimum, reference version `2022.3.62f2`, tested through Unity 6.5 |
 | Unreal Engine | 5.8 or later, for the DCC export |
 | Render pipeline | HDRP only: 14.0.12 on Unity 2022.3, 17.x on Unity 6. |
-| Runtime platform | Windows x86_64, editor and Standalone Windows 64-bit builds |
+| Editor platforms | Windows, macOS, Linux |
+| Player platforms | PC (Windows, macOS, Linux), consoles* |
 | Input formats | `.dcc`, a zipped DCC export, and `.dna` |
 | Blend shapes | LOD 0 only |
 | Wrinkle maps | LOD 0 and LOD 1 |
+
+*Console builds require the adapter source kit and your platform SDK; they have not
+been built or tested with console SDKs. See [Build for consoles](11-console-builds.md).
 
 Two packages from Unity's demo team, `com.unity.demoteam.hair` and
 `com.unity.demoteam.digital-human`, install from git URLs. They are needed for hair only. The

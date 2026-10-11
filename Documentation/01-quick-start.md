@@ -29,7 +29,11 @@ facial and body animation. The demo contains no character: you supply your own D
 | Unreal Engine | 5.8 or later, with your MetaHuman ready for DCC export |
 | Unity | 2022.3 LTS or later, tested through Unity 6.5 |
 | Render pipeline | HDRP 14 on Unity 2022.3; HDRP 17 on Unity 6 |
-| Platform | Windows 64-bit, editor and player |
+| Editor platforms | Windows, macOS, Linux |
+| Player platforms | PC (Windows, macOS, Linux), consoles* |
+
+*Console builds require the adapter source kit and your platform SDK; they have not
+been built or tested with console SDKs. See [Build for consoles](11-console-builds.md).
 
 For the character's terms, see [Licensing and legal](10-licensing.md).
 You do not need the optional groom packages for this first import.

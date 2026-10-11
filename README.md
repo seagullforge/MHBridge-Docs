@@ -28,6 +28,7 @@ when you need it. Hair and Clothing are independent workflows.
 | Fix a problem | [Troubleshooting](Documentation/08-troubleshooting.md) |
 | Drive or extend the rig from code | [API reference](Documentation/09-api-reference.md) |
 | Check content and license information | [Licensing and legal](Documentation/10-licensing.md) |
+| Build the native adapter for Xbox or PlayStation | [Build for consoles](Documentation/11-console-builds.md) |
 
 ## Included samples
 
@@ -68,7 +69,16 @@ The samples contain no bundled MetaHuman character data; import your own charact
 | Unreal Engine | 5.8 or later, with a MetaHuman in the project |
 | Unity | 2022.3 LTS minimum, reference version `2022.3.62f2`, tested through Unity 6.5 |
 | Render pipeline | HDRP only: 14.0.12 on Unity 2022.3, 17.x on Unity 6 |
-| Platform | Windows 64-bit, editor and Standalone Windows 64-bit builds |
+| Editor platforms | Windows, macOS, Linux |
+| Player platforms | PC (Windows, macOS, Linux), consoles* |
+
+*Console builds require the adapter source kit and your platform SDK; they have not
+been built or tested with console SDKs. See [Build for consoles](Documentation/11-console-builds.md).
+
+Included native libraries: Windows/Linux x86_64 and macOS universal (Intel and Apple
+silicon). Validation so far covers Windows Editor, macOS Intel Mono Player rig tests,
+and Linux native tests. Linux Unity, macOS Editor, Apple silicon, and macOS IL2CPP
+validation are pending.
 
 Strand grooms additionally need `com.unity.demoteam.hair` and the Alembic package.
 `com.unity.demoteam.digital-human` supplies skin attachment for facial grooms. The Hair Tool
