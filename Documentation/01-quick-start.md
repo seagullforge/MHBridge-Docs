@@ -1,9 +1,10 @@
-# Quick start
+# Import a MetaHuman into Unity
 
 [Guide contents](../README.md#start-here) · [Troubleshooting](08-troubleshooting.md)
 
-Import your own MetaHuman, put it in the included scene with prepared lighting, and try
-facial and body animation. The demo contains no character: you supply your own DCC export.
+Use MHBridge to import your own MetaHuman from Unreal Engine into Unity HDRP. Add it to the included
+scene with prepared lighting, and try facial and body animation. The demo contains no character:
+you supply your own DCC export.
 
 ![A MetaHuman character standing in a Unity scene under HDRP lighting](images/01-quick-start/01-result.webp)
 

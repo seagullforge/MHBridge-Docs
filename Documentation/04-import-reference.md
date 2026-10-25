@@ -5,7 +5,7 @@
 [Guide contents](../README.md#start-here) · [Troubleshooting](08-troubleshooting.md)
 
 Import your own DCC export or DNA, inspect the generated character, and extract assets before editing them.
-For the first character, follow [Quick start](01-quick-start.md).
+For your first character, follow [Import a MetaHuman into Unity](01-quick-start.md).
 
 ## On this page
 

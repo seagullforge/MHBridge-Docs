@@ -1,8 +1,8 @@
-# MHBridge Importer
+# MHBridge Importer — MetaHuman importer for Unity
 
 Get MHBridge on the [Unity Asset Store](https://assetstore.unity.com/packages/slug/403996).
 
-MHBridge takes a MetaHuman out of Unreal Engine and puts it into a Unity scene with a live
+MHBridge imports MetaHuman characters from Unreal Engine into Unity HDRP with a live
 face and body rig. RigLogic — the same evaluation Unreal runs — computes correctives, blend
 shapes, and wrinkle maps every frame, so the character in your scene stays rigged rather than
 baked down to a mesh.
@@ -11,13 +11,13 @@ baked down to a mesh.
 
 ## Start here
 
-Start with [Quick start](Documentation/01-quick-start.md) to import your character and try it
+Start with [Import a MetaHuman into Unity](Documentation/01-quick-start.md) to import your character and try it
 in the included demo scene. Continue with Face Board or Animation, then open the Import reference
 when you need it. Hair and Clothing are independent workflows.
 
 | I want to… | Open |
 |---|---|
-| Import my first character | [Quick start](Documentation/01-quick-start.md) |
+| Import my first character | [Import a MetaHuman into Unity](Documentation/01-quick-start.md) |
 | Pose a face by hand | [Face Board](Documentation/02-face-board.md) |
 | Test animation or the included CSV | [Animation](Documentation/03-animation.md) |
 | Extract assets, reimport, or change LODs | [Import reference](Documentation/04-import-reference.md) |

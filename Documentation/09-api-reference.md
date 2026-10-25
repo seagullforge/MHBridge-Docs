@@ -3,7 +3,7 @@
 [Guide contents](../README.md#start-here) · [Troubleshooting](08-troubleshooting.md)
 
 This page is for programmers. Everything the artist-facing tools do is covered in chapters
-[Quick start](01-quick-start.md) through [Hair](06-hair.md); what follows is the code underneath
+[Import a MetaHuman into Unity](01-quick-start.md) through [Hair](06-hair.md); what follows is the code underneath
 them. Troubleshooting has its own page.
 
 Choose a programming task:
