@@ -257,14 +257,14 @@ attaches the outfit. Eyes, teeth, and hair are not part of the head mask operati
 ### Material mask
 
 The mode is available only when every material on a masked body or head LOD stack supports
-`_BodyHideMask`. `MHBody_Graph`, the body shader that ships with the package, has it. A plain
-HDRP Lit material does not. The body and head also need separate materials so each can hold its
+`_BodyHideMask`. The body shader that ships with the package, `MHBody_HDRP` or `MHBody_URP`, has it.
+A plain HDRP or URP Lit material does not. The body and head also need separate materials so each can hold its
 own mask. The line under the disabled option names a material that blocks the mode:
 
 ![The Material mask option disabled, with the line naming the body material that lacks the property](images/07-clothing/12-material-mask-disabled.png)
 
 **Apply outfit** assigns each mask to the matching part's materials, sets the threshold, and enables
-the `_USE_BODY_HIDE_MASK` toggle and shader keyword. It also turns on **Alpha Clipping** in HDRP
+the `_USE_BODY_HIDE_MASK` toggle and shader keyword. It also turns on **Alpha Clipping** in the material's
 **Surface Options** when that was off, and says so in the report:
 
 ```text
@@ -394,10 +394,10 @@ A basic recipe for a common clothing material would be something like this:
 2. Export those textures. Right-click each one and select **Asset Actions > Export**, or take
    them from the source asset's own folder, which for an outfit from Fab is the same folder that
    carries the body hide mask.
-3. In Unity, create an HDRP material and wire the maps into it.
+3. In Unity, create a Lit material of your render pipeline and wire the maps into it.
 4. Assign the material in the **Materials** tab of the outfit FBX file's importer.
 
-Roughness is the one map that rarely transfers unchanged. HDRP reads a mask map as metallic in R,
+Roughness is the one map that rarely transfers unchanged. HDRP/Lit reads a mask map as metallic in R,
 ambient occlusion in G, the detail mask in B, and smoothness in A, and smoothness runs opposite to
 roughness, so a packed Unreal map usually needs its channels rearranged before it means the same
 thing.

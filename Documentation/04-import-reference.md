@@ -20,6 +20,7 @@ For your first character, follow [Import a MetaHuman into Unity](01-quick-start.
 - [LOD evaluation](#lod-evaluation)
 - [Shrink what you ship](#shrink-what-you-ship)
 - [Project-wide defaults in Import Settings](#project-wide-defaults-in-import-settings)
+- [Render pipelines and material sets](#render-pipelines-and-material-sets)
 - [Validate Setup](#validate-setup)
 - [Requirements and limitations](#requirements-and-limitations)
 - [For programmers](#for-programmers)
@@ -506,7 +507,78 @@ picks up a change here at its next re-import.
 **Base materials per LOD** holds nine global arrays: head, body, teeth, eye, eyeShell,
 eyeEdge, eyelashes, saliva, and cartilage. The index is the LOD, and the last entry repeats
 for every deeper level, so a two-entry array covers an eight-level chain. These arrays are
-global and required: every character rebuilds against them on re-import.
+global and required: every character rebuilds against them on re-import. MHBridge fills the
+empty slots from the material set of the active render pipeline, as described in
+[Render pipelines and material sets](#render-pipelines-and-material-sets).
+
+Editing a slot does not reimport your characters. Reimport a character to rebuild its embedded
+materials from the new template.
+
+## Render pipelines and material sets
+
+MHBridge supports HDRP and URP. Everything that depends on the render pipeline ships as
+sub-packages in `Assets/MHBridge/Setup`, and only the assets of the pipeline you use are unpacked
+into the project. In the names in this guide, `<Pipeline>` stands for `HDRP` or `URP`.
+
+| Sub-package | Contents | Unpacked by |
+|---|---|---|
+| `<Pipeline>.unitypackage` | The *material set*: the character shaders and material templates, the cards materials, and `Settings/MHPipelineDefaults_<Pipeline>.asset`, which lists the template for each part and LOD. | MHBridge after the first import, or **Validate Setup**. |
+| `Demo_<Pipeline>.unitypackage` | `Demo/DemoScene_<Pipeline>.unity` with its lighting assets. | Together with the material set. |
+| `GroomAdditional_<Pipeline>.unitypackage` | The groom presets, the groom shader, and the groom materials. | The Hair Tool. See [Unpack the groom assets](06-hair.md#unpack-the-groom-assets). |
+
+Every pipeline-specific asset carries the pipeline in its name, such as `MH_Eye_HDRP.mat` and
+`MH_Eye_URP.mat`, and the shaders are listed under **MHBridge > HDRP** and **MHBridge > URP** in
+the shader menu.
+
+The *active pipeline* is the render pipeline asset that the project renders with: the one
+assigned in **Project Settings > Graphics**, or the override of the current quality level in
+**Project Settings > Quality**. MHBridge follows this setting, not the unpacked set.
+
+After the first import of the package, MHBridge unpacks the material set and the demo of the
+active pipeline, and writes the templates into the empty slots of
+[Import Settings](#project-wide-defaults-in-import-settings) and of the hair profiles. Slots
+that hold your own materials stay as they are.
+
+### Switch the render pipeline
+
+MHBridge does not switch a project that already holds a material set by itself. To move a project
+from one pipeline to the other, follow these steps:
+
+1. Assign the new pipeline asset in **Project Settings > Graphics** and for each used quality
+   level in **Project Settings > Quality**.
+2. Open **Tools > MHBridge > Validate Setup**. The window also opens by itself after the change.
+3. Click **Unpack** on **The `<Pipeline>` material set is not unpacked**. MHBridge unpacks the set and
+   the demo scene, and writes the new templates into the empty slots and into the slots that hold
+   the other pipeline's templates.
+4. Click **Reimport `N`** on **`N` imported character(s) have materials of another pipeline**.
+   MHBridge reimports the listed `.dcc` and `.dna` assets with the new templates.
+5. Check the Console for a warning that starts with
+   `[MHBridge] The active render pipeline is now`. It lists the materials of your own that still
+   use an MHBridge shader of the other pipeline: extracted or remapped character materials, and
+   the materials of hair that is already imported. MHBridge does not change them. Assign the
+   shader of the new pipeline by hand, or delete them and extract or import again.
+
+Both material sets can stay in the project. If you remove a pipeline's Unity package and its set
+is still unpacked, the validator reports
+**The `<Pipeline>` material set is unpacked, but `<Pipeline>` is not installed** and offers to
+delete the set, its demo, and its groom assets. The sub-packages in `Assets/MHBridge/Setup`
+stay, so you can unpack them again.
+
+Unpack sub-packages only through MHBridge: automatically, with **Validate Setup**, or with the
+Hair Tool. To update a project from an earlier MHBridge version, see
+[Migrate from an earlier version](12-migration.md).
+
+### What differs under URP
+
+- **No diffusion profiles.** URP has no subsurface scattering, and the diffusion profile checks
+  do not appear.
+- **Two face skin materials.** LOD 0 and LOD 1 use animated wrinkle maps; LOD 2 and deeper do
+  not. See [Materials](05-materials.md).
+- **Depth Texture is required.** The eye occlusion shell and the wet edge need it. The validator
+  offers to turn it on.
+- **No high quality lines.** Strands render with the built-in renderers of the hair package.
+- **Temporal anti-aliasing leaves trails on moving strand hair.** Use SMAA or MSAA on a camera
+  that shows grooms.
 
 ## Validate Setup
 
@@ -520,13 +592,20 @@ or updates that make groom checks available. Automatic checks
 open the window only for current, undismissed issues. They wait for asset updates and compilation
 and do not open it in Play mode or batch mode.
 
-Three checks ship for the project itself, listed worst first:
+These checks ship for the project itself, listed worst first:
 
 | Check | Severity | Fix |
 |---|---|---|
-| **HDRP is not the active render pipeline** | Error | None. Which pipeline a project renders with is your decision, so the check names the cause of magenta characters and stops there. Assign an HDRP asset in **Project Settings > Graphics**, and one per quality level in **Project Settings > Quality**. |
+| **Neither HDRP nor URP is the active render pipeline** | Error | None. Assign an HDRP or URP asset in **Project Settings > Graphics**, and one per quality level in **Project Settings > Quality**. |
+| **The `<Pipeline>` material set is not unpacked**, or **is older than MHBridge `<version>`** | Error | **Unpack**, which unpacks the material set and the demo of the active pipeline, and fills the empty material slots of the import settings and the hair profiles. |
+| **The import settings or hair profiles use materials of another pipeline** | Error | **Apply**, which writes the templates of the active pipeline into the empty slots and into the slots that hold the other pipeline's templates. Slots that hold your own materials stay as they are. |
+| **`N` imported character(s) have materials of another pipeline** | Warning | **Reimport `N`**, which reimports exactly the listed assets. Extracted and remapped materials stay as they are. |
 | **Skin Weights is below Unlimited** | Warning | **Set Unlimited**, applied to every quality level. |
-| **Diffusion profile `'<name>'` is not registered** | Warning | **Register**, which adds the profile to the default volume profile. |
+| **Diffusion profile `'<name>'` is not registered** | Warning | HDRP only. **Register**, which adds the profile to the default volume profile. |
+| **URP renders without the depth texture** | Warning | URP only. **Enable**, which turns on **Depth Texture** on the listed URP assets. Without it the eye occlusion shell and the wet edge draw as hard dark shapes around the eyes. |
+| **The `<Pipeline>` material set is unpacked, but `<Pipeline>` is not installed** | Info | **Remove**, which deletes that set, its demo, and its groom assets. The sub-packages stay in `Assets/MHBridge/Setup`. |
+
+The pipeline checks are explained in [Switch the render pipeline](#switch-the-render-pipeline).
 
 For empty material fields and profile registration, follow [Diffusion profiles](05-materials.md#diffusion-profiles).
 
@@ -558,7 +637,7 @@ levels and the question comes back. Dismissals are stored per project and per us
 |---|---|
 | Unity | 2022.3 LTS minimum, reference version `2022.3.62f2`, tested through Unity 6.5 |
 | Unreal Engine | 5.8 or later, for the DCC export |
-| Render pipeline | HDRP only: 14.0.12 on Unity 2022.3, 17.x on Unity 6. |
+| Render pipeline | HDRP or URP: 14.0.12 on Unity 2022.3, 17.x on Unity 6. See [What differs under URP](#what-differs-under-urp). |
 | Editor platforms | Windows, macOS, Linux |
 | Player platforms | PC (Windows, macOS, Linux), consoles* |
 | Input formats | `.dcc`, a zipped DCC export, and `.dna` |
@@ -568,10 +647,9 @@ levels and the question comes back. Dismissals are stored per project and per us
 *Console builds require the adapter source kit and your platform SDK; they have not
 been built or tested with console SDKs. See [Build for consoles](11-console-builds.md).
 
-Two packages from Unity's demo team, `com.unity.demoteam.hair` and
-`com.unity.demoteam.digital-human`, install from git URLs. They are needed for hair only. The
-import path described on this page works without them, and the assemblies are split so that a
-project that skips them still compiles. See [Hair](06-hair.md) for the details.
+The `com.unity.demoteam.hair` package from Unity's demo team installs from a git URL. It is needed
+for hair only. The import path described on this page works without it, and the assemblies are
+split so that a project that skips it still compiles. See [Hair](06-hair.md) for the details.
 
 ## For programmers
 

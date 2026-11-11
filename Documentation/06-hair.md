@@ -37,7 +37,7 @@ You supply the groom or cards files; the package includes no hairstyles or chara
 
 | Result | Requirements | Tradeoff | Start here |
 |---|---|---|---|
-| Cards only | Exported cards FBX files and an imported character. No hair, Alembic, or digital-human packages. | No physics, lightweight. | [Build hair cards](#step-7--hair-cards-optional) |
+| Cards only | Exported cards FBX files and an imported character. No hair or Alembic packages. | No physics, lightweight. | [Build hair cards](#step-7--hair-cards-optional) |
 | Strands only | Groom packages, unpacked presets, and ABC files with strand width and root UV data. | Physics, Skinned, heavy(!), relies on the demo package. | [Requirements](#requirements), then groom setup and import. |
 | Strands near the camera, cards at distance | Both sets of files, with matching hair profiles in both tools. | Hides strands at a distance (no rendering), but keeps their mesh in RAM. | Complete groom setup, choose **Strands Plus Cards**, and [build cards](#step-7--hair-cards-optional). Either tool can run first. |
 
@@ -50,16 +50,13 @@ that controls the strand-to-cards swap. All cards groups under one profile switc
 
 | What | Where it comes from | What needs it |
 |---|---|---|
-| `com.unity.demoteam.hair` | MHBridge fork, git URL | Strand grooms. Without it the Hair Tool draws a setup page instead of itself. |
+| `com.unity.demoteam.hair` 0.19.0-preview.2 or later | MHBridge fork, git URL | Strand grooms. Without it the Hair Tool draws a setup page instead of itself. |
 | `com.unity.formats.alembic` 2.2.2 or later | Unity registry | Reading the `.abc` grooms. |
-| `com.unity.demoteam.digital-human` | MHBridge fork, git URL | Skin attachment: eyebrows, beard, and mustache riding the face. |
 | `HairStrands` and `AlembicImporter` | Built-in Unreal plugins | Grooms in Unreal. |
 | SimpleGroomExporter | Third-party Unreal plugin, free, installed separately | Exporting an `.abc` that carries strand width and root UVs. Any file that already carries them works too. |
 
-The digital-human package is optional, and what it costs to skip is one specific thing: **skin
-attachment**. A groom that asked for it falls back to a bone, the report says so, and eyebrows,
-beard, and mustache stop following the character's expression. For a character that wears scalp hair
-and nothing else, skipping the package changes nothing.
+Strand hair and cards work under both HDRP and URP. The differences are listed in
+[Limits](#limits).
 
 ### Install the Unity packages
 
@@ -78,26 +75,21 @@ To add the packages, follow these steps:
 2. Click **Package Manager**.
 3. In Package Manager, select **+ > Add package from git URL**.
 4. Paste the URL, and click **Add**.
-5. Optional: To add skin attachment, repeat steps 1–4 for the **Demo Team Digital Human** row.
-6. In the Hair Tool, on the **Alembic** row, click **Open**. Package Manager opens on the Alembic
+5. In the Hair Tool, on the **Alembic** row, click **Open**. Package Manager opens on the Alembic
    package.
-7. Click **Install**.
-8. Wait for the recompile to finish, and then reopen the Hair Tool. The setup page is replaced by the
+6. Click **Install**.
+7. Wait for the recompile to finish, and then reopen the Hair Tool. The setup page is replaced by the
    tool itself.
 
-Skip digital-human and the window still opens, with a banner at the top naming what is missing and a
-**Packages** foldout holding the same rows — so you can add it later without going to look for the
-URL again.
-
-Two of the three rows point at MHBridge forks rather than at Unity's own repositories:
+The hair row points at an MHBridge fork rather than at Unity's own repository:
 
 ```text
 https://github.com/PinkPanter/com.unity.demoteam.hair
-https://github.com/PinkPanter/com.unity.demoteam.digital-human
 ```
 
-The tools use MHBridge forks for compatibility with the supported Unity and HDRP versions (6.3+ Unity and 17+ HDRP).
-Both keep Unity's [Unity Companion License](https://unity.com/legal/licenses/unity-companion-license).
+The fork supports Unity 6.3+ with HDRP 17+ and includes skin attachment for facial grooms. It
+keeps Unity's
+[Unity Companion License](https://unity.com/legal/licenses/unity-companion-license).
 
 ### Install a package without git
 
@@ -128,22 +120,30 @@ the package — Hair, Eyebrows, Beard, and Mustache — in `Assets/MHBridge/Hair
 The profiles are on disk from the first import, because the Cards Tool reads them for the bone and
 the card material. What they point at is not. Each of those assets is typed by, or built on, a
 package MHBridge does not ship, and a project without it cannot import those files —
-so they travel in `Assets/MHBridge/Hair/GroomAdditional.unitypackage` instead:
+so they travel in a sub-package instead, one for each render pipeline:
+`Assets/MHBridge/Setup/GroomAdditional_HDRP.unitypackage` and `GroomAdditional_URP.unitypackage`.
+In the names in this table, `<Pipeline>` is `HDRP` or `URP`:
 
 | What waits in the sub-package | Why |
 |---|---|
 | `Presets/<Type>AssetPreset.asset` | A HairAsset, a type that comes from `com.unity.demoteam.hair`. |
 | `Presets/<Type>InstancePreset.prefab` | A HairInstance prefab, from that same package. |
-| `Materials/Shaders/MHGroom.shadergraph` | Reaches into the package for its `HairVertex` subgraph node. |
-| `Materials/Hair_Groom.mat`, `Eyebrows_Groom.mat`, `Beard_Groom.mat`, `Mustache_Groom.mat` | The material that shader belongs to, and magenta without it. |
+| `Materials/Shaders/MHGroom_<Pipeline>.shadergraph` | Reaches into the package for its `HairVertex` subgraph node. |
+| `Materials/Hair_Groom_<Pipeline>.mat`, `Eyebrows_Groom_<Pipeline>.mat`, `Beard_Groom_<Pipeline>.mat`, `Mustache_Groom_<Pipeline>.mat` | The material that shader belongs to, and magenta without it. |
 
 Until you unpack it, the four profiles carry empty **Base Hair Asset**, **Hair Instance Prefab**, and
 **Groom Material** fields, and the Hair Tool opens on a prompt rather than on the tool:
 
 ![The Hair Tool prompt reading No usable hair profiles were found, with the Unpack button](images/06-hair/04-presets-prompt.png)
 
-- Click **Unpack GroomAdditional.unitypackage**. The templates, the shader, and the material land in
-  the folders above, and the four profiles are replaced by copies that point at them.
+- Click **Unpack GroomAdditional_HDRP.unitypackage** or **Unpack GroomAdditional_URP.unitypackage**.
+  The button names the sub-package of the project's active render pipeline. The templates, the
+  shader, and the material land in the folders above, and the four profiles are replaced by copies
+  that point at them.
+
+After you change the render pipeline, unpack the groom sub-package of the new pipeline in the same
+way, and import the grooms again. Hair that is already imported keeps its materials. See
+[Switch the render pipeline](04-import-reference.md#switch-the-render-pipeline).
 
 Three more buttons sit under the prompt. **Re-check** reads the folder again. **Continue anyway**
 dismisses the prompt for this session, and **Continue and don't show again** dismisses it —
@@ -164,8 +164,8 @@ The shipped presets use **Builtin Tubes**. **Enable** switches the presets and c
 the shader and HDRP settings. For the exact
 requirements and existing groom instances, see [High quality lines](#high-quality-lines-unity-6).
 
-On Unity 2022.3 with HDRP 14, keep **Builtin Tubes** or another built-in renderer. Skip the
-high quality lines setup and continue to export and import the grooms.
+On Unity 2022.3 with HDRP 14, and under URP on any Unity version, keep **Builtin Tubes** or another
+built-in renderer. Skip the high quality lines setup and continue to export and import the grooms.
 
 ![Setup after unpacking groom assets](images/06-hair/05-validator-after-unpack.png)
 
@@ -329,7 +329,7 @@ nothing outside Unity.
 
 **Skin attachment** is for eyebrows, beards, and mustaches, which have to travel with the
 character's expression rather than with a bone. The roots are bound to the deforming head mesh
-through the digital-human package's `SkinAttachment`, and no `ParentConstraint` is added. This is
+through the hair package's `SkinAttachment`, and no `ParentConstraint` is added. This is
 also the half that constrains your LOD choice in [Step 5](#step-5--pick-a-lod-mode): a skin
 attachment freezes the moment the head mesh it reads stops being skinned.
 
@@ -653,7 +653,7 @@ animation to decide whether its result is suitable for a close-up face.
 ## Tune the look
 
 For color, opacity, and highlights, see [Hair materials](05-materials.md#hair-materials).
-The `HairInstance` component controls strand shape and rendering. On Unity 6, you can also
+The `HairInstance` component controls strand shape and rendering. On Unity 6 with HDRP, you can also
 configure HDRP to draw strands as [high quality lines](#high-quality-lines-unity-6).
 
 ### The HairInstance settings
@@ -678,7 +678,7 @@ Separation** beside it pushes strands apart, which reads as volume.
 | **Builtin Lines** | One camera-facing line per strand. | The cheapest, and the one to fall back on when a groom is too expensive. |
 | **Builtin Strips** | A flat ribbon per strand. | A middle ground: more body than lines, cheaper than tubes. |
 | **Builtin Tubes** | A tube with real thickness. | What the shipped presets use, and what a hero character wants close to camera. |
-| **HDRP High Quality Lines** | Lines drawn by HDRP's own line renderer rather than as mesh geometry. | Unity 6 only, and only after the setup below. On earlier versions it falls back to **Builtin Lines** with a warning in the inspector. |
+| **HDRP High Quality Lines** | Lines drawn by HDRP's own line renderer rather than as mesh geometry. | Unity 6 with HDRP only, and only after the setup below. On earlier versions it falls back to **Builtin Lines** with a warning in the inspector. |
 
 ![The same groom rendered as builtin lines, as strips, as tubes, and as HDRP high quality lines, side by side](images/06-hair/24-groom-variants.png)
 
@@ -691,14 +691,14 @@ the heaviest of the built-in three.
 On Unity 6, HDRP can draw strands through a line renderer of its own instead of as mesh tubes:
 cleaner edges, and transparency that sorts correctly where strands cross. It is a hero-character
 setting like the groom itself — the lines are rasterized, sorted, and shaded in passes of their own,
-and those passes cost frame time — so measure it on your own target hardware. Below Unity 6 the
-feature does not exist and none of this section applies.
+and those passes cost frame time — so measure it on your own target hardware. Below Unity 6 and
+under URP the feature does not exist and none of this section applies.
 
 Four things have to agree before a single strand is drawn this way:
 
 | What | Where it lives |
 |---|---|
-| **Support High Quality Line Rendering**, and a strand width connected to the graph's **Width** block | `MHGroom.shadergraph` |
+| **Support High Quality Line Rendering**, and a strand width connected to the graph's **Width** block | `MHGroom_HDRP.shadergraph` |
 | **Renderer** set to **HDRP High Quality Lines** | the four presets in `Assets/MHBridge/Hair/Presets` |
 | **High Quality Line Rendering**, under **Rendering** | every HDRP asset the project renders with |
 | **High Quality Line Rendering** in the default camera frame settings, and an enabled **High Quality Lines** volume override | **Project Settings > Graphics > HDRP** |
@@ -841,7 +841,10 @@ The mask does not update itself. After you re-import a groom or change its setti
 - **High quality lines need Unity 6.** HDRP 17 is where the strand width reaches the line renderer,
   so below Unity 6 the renderer is not offered and MHBridge never proposes it. See
   [High quality lines](#high-quality-lines-unity-6).
-- The package's platform requirements and HDRP requirement apply to hair as well. See
+- **URP has no high quality lines.** Under URP, strands render with the built-in renderers.
+- **Temporal anti-aliasing under URP leaves trails on moving strands.** Use SMAA or MSAA on a
+  camera that shows grooms.
+- The package's platform and render pipeline requirements apply to hair as well. See
   [Requirements and limitations](04-import-reference.md#requirements-and-limitations).
 
 ## Troubleshooting
@@ -850,10 +853,12 @@ The mask does not update itself. After you re-import a groom or change its setti
 |---|---|
 | The Hair Tool shows a page of packages instead of the tool | The hair or the Alembic package is missing. Add it in Package Manager as described in [Install the Unity packages](#install-the-unity-packages), wait for the recompile, and reopen the window. |
 | **Add package from git URL** fails with a git error | Package Manager needs a `git` client of its own to resolve a git URL. Install Git, restart Unity, or take the package as a folder — see [Install a package without git](#install-a-package-without-git). |
-| The tool opens on `No usable hair profiles were found` | The groom assets are not unpacked. Click **Unpack GroomAdditional.unitypackage**. |
+| The tool opens on `No usable hair profiles were found` | The groom assets of the active render pipeline are not unpacked. Click the **Unpack GroomAdditional_…** button. |
 | A groom came in on the wrong profile — eyebrows treated as scalp hair, for example | The `.abc` file name carries none of the keywords, so the fallback profile was used. Rename the file, add the keyword to the profile you want, or assign the profile by hand in the entry. |
 | The console reports `Unable to resolve strand diameters`, or the report says `no 'width'` | The `.abc` file carries no `width` param. Re-export it with **Export Widths** on. |
-| Eyebrows and beard do not move with the character's expression | They fell back to bone attachment because `com.unity.demoteam.digital-human` is not installed. The report names it, and it names any other skin-attach problem too, so read it before changing anything else. |
+| Eyebrows and beard do not move with the character's expression | They fell back to bone attachment. The report names the reason, such as a head mesh that was not found, so read it before changing anything else. |
+| The hair renders magenta after the render pipeline changed | The imported hair keeps the materials of the other pipeline. Unpack the groom sub-package of the new pipeline, then import the grooms and build the cards again, or assign the new pipeline's shader to the hair materials by hand. |
+| Moving strands leave trails under URP | Temporal anti-aliasing is on. Switch the camera to SMAA or MSAA. |
 | The groom looks sparse, or like a solid helmet | Start with **Opacity Threshold** on its material, then **Strand Diameter** on the `HairInstance`. See [Hair materials](05-materials.md#hair-materials) and [HairInstance settings](#the-hairinstance-settings). |
 | The groom disappeared after switching **Renderer** to **HDRP High Quality Lines** | One of the four pieces is missing: the material's shader, the HDRP asset, the frame settings, or the volume override. Open **Tools > MHBridge > Validate Setup** and click **Enable** on what it lists. |
 | Every strand is the same thickness with high quality lines on | The shader's **Width** block has no input, so HDRP falls back to its own 0.08 cm default. The **Enable** button in **MHBridge Setup** connects it. |

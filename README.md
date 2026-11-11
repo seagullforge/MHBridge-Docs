@@ -2,7 +2,7 @@
 
 Get MHBridge on the [Unity Asset Store](https://assetstore.unity.com/packages/slug/403996).
 
-MHBridge imports MetaHuman characters from Unreal Engine into Unity HDRP with a live
+MHBridge imports MetaHuman characters from Unreal Engine into Unity, under HDRP or URP, with a live
 face and body rig. RigLogic — the same evaluation Unreal runs — computes correctives, blend
 shapes, and wrinkle maps every frame, so the character in your scene stays rigged rather than
 baked down to a mesh.
@@ -22,6 +22,7 @@ when you need it. Hair and Clothing are independent workflows.
 | Test animation or the included CSV | [Animation](Documentation/03-animation.md) |
 | Extract assets, reimport, or change LODs | [Import reference](Documentation/04-import-reference.md) |
 | Tune materials | [Materials](Documentation/05-materials.md) |
+| Use URP, or change the render pipeline | [Render pipelines and material sets](Documentation/04-import-reference.md#render-pipelines-and-material-sets) |
 | Add only hair cards | [Cards workflow](Documentation/06-hair.md#step-7--hair-cards-optional) |
 | Add strands or a strands/cards combination | [Hair](Documentation/06-hair.md) |
 | Dress my character | [Clothing](Documentation/07-clothing.md) |
@@ -29,6 +30,7 @@ when you need it. Hair and Clothing are independent workflows.
 | Drive or extend the rig from code | [API reference](Documentation/09-api-reference.md) |
 | Check content and license information | [Licensing and legal](Documentation/10-licensing.md) |
 | Build the native adapter for Xbox or PlayStation | [Build for consoles](Documentation/11-console-builds.md) |
+| Update a project from an earlier MHBridge version | [Migrate from an earlier version](Documentation/12-migration.md) |
 
 ## Included samples
 
@@ -36,7 +38,7 @@ The package includes these samples under `Assets/MHBridge/Demo`:
 
 | Sample | Use |
 |---|---|
-| `DemoScene.unity` | Prepared lighting, a camera, animation buttons, and a Face Board panel. Add your own character at the empty `YOUR METAHUMAN` placeholder. |
+| `DemoScene_HDRP.unity` or `DemoScene_URP.unity` | Prepared lighting, a camera, animation buttons, and a Face Board panel. Add your own character at the empty `YOUR METAHUMAN` placeholder. The project holds the scene of its active render pipeline. |
 | `Anims/Demo_AnimController.controller` | Separate body and face layers for the demo controls. |
 | `Anims/Body` and `Anims/Face` | Body idle/exercise and facial animation FBX files. |
 | `Anims/Face/Demo_ARKit.csv` | A recorded CSV to bake into a facial clip without making a phone recording first. |
@@ -48,8 +50,8 @@ The samples contain no bundled MetaHuman character data; import your own charact
 ## What MHBridge does
 
 - **Import.** A DCC export from Unreal, or a raw `.dna` file, becomes one self-contained Unity
-  asset: meshes for every LOD, HDRP materials, a single skeleton, an Avatar, and the runtime
-  DNA the rig loads.
+  asset: meshes for every LOD, materials for the active render pipeline, a single skeleton, an
+  Avatar, and the runtime DNA the rig loads.
 - **A live rig.** The `MHFace` and `MHBody` components evaluate RigLogic inside a native plugin
   every frame, over whatever the `Animator` poses.
 - **Animation.** Facial takes and body clips from Unreal, and ARKit takes from Live Link Face,
@@ -68,7 +70,7 @@ The samples contain no bundled MetaHuman character data; import your own charact
 |---|---|
 | Unreal Engine | 5.8 or later, with a MetaHuman in the project |
 | Unity | 2022.3 LTS minimum, reference version `2022.3.62f2`, tested through Unity 6.5 |
-| Render pipeline | HDRP only: 14.0.12 on Unity 2022.3, 17.x on Unity 6 |
+| Render pipeline | HDRP or URP: 14.0.12 on Unity 2022.3, 17.x on Unity 6 |
 | Editor platforms | Windows, macOS, Linux |
 | Player platforms | PC (Windows, macOS, Linux), consoles* |
 
@@ -80,9 +82,11 @@ silicon). Validation so far covers Windows Editor, macOS Intel Mono Player rig t
 and Linux native tests. Linux Unity, macOS Editor, Apple silicon, and macOS IL2CPP
 validation are pending.
 
-Strand grooms additionally need `com.unity.demoteam.hair` and the Alembic package.
-`com.unity.demoteam.digital-human` supplies skin attachment for facial grooms. The Hair Tool
-installs these dependencies. Cards-only workflows need none of these packages.
+Strand grooms additionally need `com.unity.demoteam.hair` and the Alembic package. The Hair Tool
+lists these dependencies and where to get them. Cards-only workflows need none of these packages.
+
+URP support has a few differences from HDRP. See
+[What differs under URP](Documentation/04-import-reference.md#what-differs-under-urp).
 
 ## What this repository holds
 
