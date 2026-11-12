@@ -10,7 +10,7 @@ could resolve some of the errors instantly:
    `[MHBody]`, `[MHFaceClipDriver]`, `[FaceBoard]`, `[MHHairTopologyPin]` — so a prefix is a
    search term.
 
-MHBridge requires HDRP. Editor platforms are Windows, macOS, and Linux; Player targets
+MHBridge requires HDRP or URP. Editor platforms are Windows, macOS, and Linux; Player targets
 are PC (Windows, macOS, Linux) and consoles*.
 
 *Console builds require the adapter source kit and your platform SDK; they have not
@@ -51,11 +51,15 @@ Start with **Tools > MHBridge > Validate Setup**. Groom-specific checks are cove
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| The character, and everything else, renders magenta | HDRP is not the active render pipeline, and the package ships HDRP materials only | Assign an HDRP asset in **Project Settings > Graphics**, and one per level in **Project Settings > Quality**. This check offers no fix button, because which pipeline a project renders with is your decision. |
+| The character, and everything else, renders magenta | Neither HDRP nor URP is the active render pipeline | Assign an HDRP or URP asset in **Project Settings > Graphics**, and one per level in **Project Settings > Quality**. This check offers no fix button, because which pipeline a project renders with is your decision. |
+| Only the MHBridge characters render magenta | The render pipeline changed, or the material set of the active pipeline is not unpacked | Open **Validate Setup**, click **Unpack** or **Apply** on the material set issue, then click **Reimport `N`** on the character materials issue. See [Switch the render pipeline](04-import-reference.md#switch-the-render-pipeline). |
+| Extracted materials or imported hair stay magenta after the pipeline changed | They are your own files, so MHBridge does not change them. A Console warning lists them | Assign the shader of the new pipeline by hand, or delete them and extract or import again. |
+| Under URP, dark hard shapes surround the eyes | **Depth Texture** is off on the URP asset | Click **Enable** on **URP renders without the depth texture**. |
+| Two copies of a shipped material or shader after an update | A sub-package from `Assets/MHBridge/Setup` was imported by hand over an earlier version | Delete the copies that the update added, then unpack through **Validate Setup**. See [Update the MHBridge package](12-migration.md#step-1--update-the-mhbridge-package). |
 | The head and hands deform around creases, and skin slides over the joints | `QualitySettings.skinWeights` is below `Unlimited`, and MetaHuman meshes bind up to about twelve influences per vertex | Click **Set Unlimited**, which writes every quality level. Setting only the active level leaves the level a build ships with broken. |
-| The skin looks like plastic, subsurface scattering seems absent, and there is no error anywhere | The diffusion profile is not registered with HDRP, which silently substitutes the neutral one | Click **Register**. Registering the profile on a Volume in a scene works too, which is why this is a dismissible warning rather than an error. |
-| The skin renders in a wrong flat colour | The **Diffusion Profile** slot on an MHBridge skin material is empty | Assign `MH_Skin.asset` from `Assets/MHBridge/Shaders` in the material's inspector. |
-| The validator names an empty iris, sclera, or teeth diffusion field | The named material slot needs its own profile | Assign `MH_IrisDiffusionProfile`, `MH_ScleraDiffusionProfile`, or `MH_Teeth` as appropriate, then **Re-check** and **Register**. See [Validate Setup](04-import-reference.md#validate-setup). |
+| Under HDRP, the skin looks like plastic, subsurface scattering seems absent, and there is no error anywhere | The diffusion profile is not registered with HDRP, which silently substitutes the neutral one | Click **Register**. Registering the profile on a Volume in a scene works too, which is why this is a dismissible warning rather than an error. |
+| The skin renders in a wrong flat colour | The **Diffusion Profile** slot on an MHBridge skin material is empty | HDRP only. Assign `MH_Skin_HDRP.asset` from `Assets/MHBridge/Shaders` in the material's inspector. |
+| The validator names an empty iris, sclera, or teeth diffusion field | The named material slot needs its own profile | Assign `MH_IrisDiffusionProfile_HDRP`, `MH_ScleraDiffusionProfile_HDRP`, or `MH_Teeth_HDRP` as appropriate, then **Re-check** and **Register**. See [Validate Setup](04-import-reference.md#validate-setup). |
 | `Diffusion profile asset is missing` | The profile was deleted, or the package arrived incomplete | Assign a profile by hand, as above. |
 | `HDRP's diffusion profile list could not be read` | MHBridge cannot reach the default volume profile of this HDRP version | Check that **Project Settings > Graphics > HDRP > Volume** holds a default profile. If it does, report the HDRP version to us. |
 | The window never opens by itself | Automatic checks run at session startup, after character or groom-asset imports, and after relevant package changes; the window opens only for current issues. Startup checks also require `MHImportSettings` | Open **Tools > MHBridge > Validate Setup**. See the [automatic check policy](04-import-reference.md#validate-setup) for triggers, dismissals, and editor state limits. |
@@ -138,7 +142,7 @@ For root motion, retargeted proportions, and Avatar import, see [Animation troub
 
 Send us this, and the report is workable on the first read:
 
-- The Unity version and the HDRP version.
+- The Unity version, the render pipeline (HDRP or URP), and its version.
 - The MHBridge version.
 - The full Console message, prefix included.
 - The full Player/Editor log file.

@@ -106,7 +106,7 @@ yours to pass on as an outfit. For the workflow, see [Clothing](07-clothing.md).
 
 ## What this package contains
 
-MHBridge is Editor tooling, runtime components, HDRP shaders and materials, and one native plugin,
+MHBridge is Editor tooling, runtime components, HDRP and URP shaders and materials, and one native plugin,
 `MHBridgeRig.dll`. It is distributed under the
 [Unity Asset Store EULA](https://unity.com/legal/as-terms). It contains no MetaHuman character
 data: no DNA files, no meshes, no textures, no character of any kind. Every character in a project
@@ -126,9 +126,9 @@ rendered output travels, and the files it was rendered from stay in the project 
 | Component | License | How it reaches you |
 |---|---|---|
 | OpenRigLogic, by Epic Games | [MIT](https://github.com/EpicGames/OpenRigLogic) | Compiled into `MHBridgeRig.dll` and shipped with the package. The full text is in the `Third Party Notices.md` file, and beside the binary in `Plugins/x86_64/LICENSE-OpenRigLogic.txt`. |
-| Unity HDRP sample shader components | Unity Companion License | Included or modified hair shader graphs, eye shading, hair subgraphs, and mask textures, listed in `Third Party Notices.md`. The eye graph is `Assets/MHBridge/Shaders/MHEye_Graph.shadergraph`. |
+| Unity HDRP sample shader components | Unity Companion License | Included or modified hair shader graphs, eye shading, hair subgraphs, and mask textures, listed in `Third Party Notices.md`. The eye graph is `Assets/MHBridge/Shaders/MHEye_HDRP.shadergraph`. |
 | Unity Shader Graph Depth Fade template | Unity Companion License | `Assets/MHBridge/Shaders/MHDepthFade.shadersubgraph`, adapted from the Shader Graph template and included for the eye graphs. |
-| `com.unity.demoteam.hair` and `com.unity.demoteam.digital-human`, by Unity Technologies | [Unity Companion License](https://unity.com/legal/licenses/unity-companion-license) | Optional, and never bundled. You install them yourself from git URLs when you use hair. |
+| `com.unity.demoteam.hair`, by Unity Technologies | [Unity Companion License](https://unity.com/legal/licenses/unity-companion-license) | Optional, and never bundled. You install it yourself from a git URL when you use hair. |
 
 ## Trademarks
 

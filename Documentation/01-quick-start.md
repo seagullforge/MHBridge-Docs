@@ -2,7 +2,7 @@
 
 [Guide contents](../README.md#start-here) · [Troubleshooting](08-troubleshooting.md)
 
-Use MHBridge to import your own MetaHuman from Unreal Engine into Unity HDRP. Add it to the included
+Use MHBridge to import your own MetaHuman from Unreal Engine into a Unity HDRP or URP project. Add it to the included
 scene with prepared lighting, and try facial and body animation. The demo contains no character:
 you supply your own DCC export.
 
@@ -29,7 +29,7 @@ you supply your own DCC export.
 |---|---|
 | Unreal Engine | 5.8 or later, with your MetaHuman ready for DCC export |
 | Unity | 2022.3 LTS or later, tested through Unity 6.5 |
-| Render pipeline | HDRP 14 on Unity 2022.3; HDRP 17 on Unity 6 |
+| Render pipeline | HDRP or URP: version 14 on Unity 2022.3, version 17 on Unity 6 |
 | Editor platforms | Windows, macOS, Linux |
 | Player platforms | PC (Windows, macOS, Linux), consoles* |
 
@@ -41,10 +41,16 @@ You do not need the optional groom packages for this first import.
 
 ## Install the package
 
-1. Open your HDRP project in Unity.
+1. Open your HDRP or URP project in Unity.
 2. Import the package contents and wait for Unity to finish importing and compiling.
+3. Wait for the second, automatic import. MHBridge unpacks the materials, the shaders, and the
+   demo scene of the project's active render pipeline, and the Console reads
+   `[MHBridge] Unpacked HDRP, Demo_HDRP for HDRP` or `[MHBridge] Unpacked URP, Demo_URP for URP`.
 
 The **Tools > MHBridge** menu and `Assets/MHBridge/Demo` folder are available after import.
+If no HDRP or URP asset is assigned yet, nothing is unpacked: assign one, then follow
+[Validate the project setup](#validate-the-project-setup). For details, see
+[Render pipelines and material sets](04-import-reference.md#render-pipelines-and-material-sets).
 
 ![Import the MHBridge package with the Demo folder included](images/01-quick-start/02-package-import.png)
 
@@ -82,7 +88,7 @@ A raw `.dna` file is the other way in, described in
 ## Import the DCC export
 
 A `.dcc` file is the DCC export archive living in your project as a finished character:
-meshes, one skeleton, HDRP materials, an Avatar, and the runtime DNA.
+meshes, one skeleton, materials for the active render pipeline, an Avatar, and the runtime DNA.
 
 1. In Unity, select **Tools > MHBridge > Import > DCC Zip**.
 
@@ -117,16 +123,19 @@ Console reads
 3. Resolve any manual assignments named by the remaining issues.
 4. Click **Re-check** and confirm that the window reads **Everything checks out**.
 
-If HDRP is not active, assign an HDRP asset in **Project Settings > Graphics** and for each
-used quality level in **Project Settings > Quality**. Empty material diffusion fields need
-the matching skin, teeth, iris, or sclera profile. **Fix All** cannot choose those assets for you.
+If neither HDRP nor URP is active, assign an HDRP or URP asset in **Project Settings > Graphics**
+and for each used quality level in **Project Settings > Quality**. Under HDRP, empty material
+diffusion fields need the matching skin, teeth, iris, or sclera profile. **Fix All** cannot choose
+those assets for you. Under URP, the window can ask to turn on **Depth Texture**, which the eye
+materials need.
 See [Validate Setup](04-import-reference.md#validate-setup) for the full reference.
 
 ![Material-specific setup issues and diffusion profiles](images/05-materials/04-diffusion-profiles.png)
 
 ## Open the demo scene
 
-1. Open `Assets/MHBridge/Demo/DemoScene.unity`.
+1. Open `Assets/MHBridge/Demo/DemoScene_HDRP.unity` in an HDRP project, or
+   `Assets/MHBridge/Demo/DemoScene_URP.unity` in a URP project.
 2. In the Hierarchy, find the empty `YOUR METAHUMAN` object. It marks where your character belongs.
 3. Drag your imported `.dcc` asset into the scene as a root object and set its **Position** to `(0, 0, 0)`.
 4. On the `MH Demo` object, assign your character to **Character** in **MH Demo Controller**.
@@ -137,12 +146,18 @@ character root supplies `Animator`, `MHBody`, `MHFace`, and `MHFaceClipDriver` f
 The [import result](04-import-reference.md#what-an-import-produces)
 explains the hierarchy of MHCharacter.
 
+The URP demo scene lights the character with several spot lights. For the intended look, check
+these settings on your URP asset: **HDR** on, **Additional Lights** set to **Per Pixel** with
+**Per Object Limit** of at least `6`, **Cast Shadows** on for additional lights, and
+**Soft Shadows** on.
+
 ![Empty demo scene with YOUR METAHUMAN and MH Demo](images/01-quick-start/06-demo-empty-scene.png)
 
 ![Your imported character assigned to MH Demo Controller at the origin](images/01-quick-start/07-demo-character-setup.png)
 
-For your own scene, add a Directional Light and an HDRP Volume with sky and fog settings
-before judging the materials. The demo scene is the prepared-lighting starting point.
+For your own scene, add a Directional Light and a Volume before judging the materials: sky and
+fog settings under HDRP, or tonemapping and a skybox under URP. The demo scene is the
+prepared-lighting starting point.
 
 ## Assign the demo animation
 
@@ -203,7 +218,7 @@ Expand the `.dcc` asset in the Project window to see what the import produced.
 |---|---|
 | The character prefab | the main object of the `.dcc` asset |
 | Head and body meshes, one set per LOD | sub-assets |
-| HDRP materials | sub-assets |
+| Materials for the active render pipeline | sub-assets |
 | Split iris and sclera color and normal maps | sub-assets; four PNG files after extraction |
 | The Avatar, named `<Name>_Avatar` | sub-asset |
 | The runtime DNA the rig loads | sub-assets `dna_head` and `dna_body` |

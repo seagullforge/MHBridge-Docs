@@ -3,27 +3,52 @@
 [Guide contents](../README.md#start-here) · [Troubleshooting](08-troubleshooting.md)
 
 The DCC/DNA importer copies the material templates assigned in **Tools > MHBridge > Import Settings**.
-The shipped settings use the following materials for each part and LOD:
+MHBridge fills these settings from the material set of the project's active render pipeline. See
+[Render pipelines and material sets](04-import-reference.md#render-pipelines-and-material-sets).
 
-| Role | Material template | Shader graph | Visible effect |
+Under HDRP, the shipped settings use the following materials for each part and LOD:
+
+| Role | Material template | Shader | Visible effect |
 |---|---|---|---|
-| Body | `MH_Body.mat` | `MHBody_Graph` | Body skin color, surface detail, and surface shading. |
-| Face skin, LOD0 | `Head/MHSkin_Animated_StuckLit.mat` | `MHSkin_Animated_StuckLit_Graph` | Skin shading with animated wrinkle maps and the scalp mask. |
-| Face skin, LOD1 | `Head/MHSkin_AnimatedSS.mat` | `MHSkin_AnimatedSS_Graph` | Skin scattering with animated wrinkle maps and the scalp mask. |
-| Face skin, LOD2–3 | `Head/MHSkin_SS.mat` | `MHSkin_SS_Graph` | Skin scattering without animated wrinkle maps. |
-| Face skin, LOD4 and deeper | `Head/MHSkin_NoSS.mat` | `MHSkin_NoSS_Graph` | Skin shading without subsurface scattering or animated wrinkle maps. |
-| Teeth | `MH_Teeth.mat` | HDRP/Lit | Tooth color, surface detail, and scattering. |
-| Eye | `MH_Eye.mat` | `MHEye_Graph` | Sclera, iris, and pupil. |
-| EyeShell | `MH_EyeShell.mat` | `MHEyeShell_Graph` | Darkening under the eyelids. |
-| EyeEdge | `MH_EyeEdge.mat` | `MHEyeEdge_Graph` | Wet edge where the eye meets the lid. |
-| Eyelashes | `MH_Eyelashes.mat` | HDRP/Lit | Eyelash color and alpha-clipped shape. |
-| Saliva | `MH_Saliva.mat` | HDRP/Lit | Transparent saliva surface. |
-| Cartilage | `MH_Cartilage.mat` | HDRP/Lit | Inner-eye cartilage, using the head color and normal maps. |
+| Body | `MH_Body_HDRP.mat` | `MHBody_HDRP` | Body skin color, surface detail, and surface shading. |
+| Face skin, LOD0 | `Head/MHSkin_Animated_StuckLit_HDRP.mat` | `MHSkin_Animated_StuckLit_HDRP` | Skin shading with animated wrinkle maps and the scalp mask. |
+| Face skin, LOD1 | `Head/MHSkin_AnimatedSS_HDRP.mat` | `MHSkin_AnimatedSS_HDRP` | Skin scattering with animated wrinkle maps and the scalp mask. |
+| Face skin, LOD2–3 | `Head/MHSkin_SS_HDRP.mat` | `MHSkin_SS_HDRP` | Skin scattering without animated wrinkle maps. |
+| Face skin, LOD4 and deeper | `Head/MHSkin_NoSS_HDRP.mat` | `MHSkin_NoSS_HDRP` | Skin shading without subsurface scattering or animated wrinkle maps. |
+| Teeth | `MH_Teeth_HDRP.mat` | HDRP/Lit | Tooth color, surface detail, and scattering. |
+| Eye | `MH_Eye_HDRP.mat` | `MHEye_HDRP` | Sclera, iris, and pupil. |
+| EyeShell | `MH_EyeShell_HDRP.mat` | `MHEyeShell_HDRP` | Darkening under the eyelids. |
+| EyeEdge | `MH_EyeEdge_HDRP.mat` | `MHEyeEdge_HDRP` | Wet edge where the eye meets the lid. |
+| Eyelashes | `MH_Eyelashes_HDRP.mat` | HDRP/Lit | Eyelash color and alpha-clipped shape. |
+| Saliva | `MH_Saliva_HDRP.mat` | HDRP/Lit | Transparent saliva surface. |
+| Cartilage | `MH_Cartilage_HDRP.mat` | HDRP/Lit | Inner-eye cartilage, using the head color and normal maps. |
 
-Templates are in `Assets/MHBridge/Materials`; MHBridge graphs are in `Assets/MHBridge/Shaders`.
+Under URP, the shipped settings use these materials:
+
+| Role | Material template | Shader | Visible effect |
+|---|---|---|---|
+| Body | `MH_Body_URP.mat` | `MHBody_URP` | Body skin color, surface detail, and surface shading. |
+| Face skin, LOD0–1 | `Head/MHSkin_Animated_URP.mat` | `MHSkin_Animated_URP` | Skin shading with animated wrinkle maps and the scalp mask. |
+| Face skin, LOD2 and deeper | `Head/MHSkin_Static_URP.mat` | `MHSkin_Static_URP` | Skin shading without animated wrinkle maps. |
+| Teeth | `MH_Teeth_URP.mat` | `MHSimpleLit_URP` | Tooth color and surface detail. |
+| Eye | `MH_Eye_URP.mat` | `MHEye_URP` | Sclera, iris, and pupil. |
+| EyeShell | `MH_EyeShell_URP.mat` | `MHEyeShell_URP` | Darkening under the eyelids. Needs the URP **Depth Texture**. |
+| EyeEdge | `MH_EyeEdge_URP.mat` | `MHEyeEdge_URP` | Wet edge where the eye meets the lid. Needs the URP **Depth Texture**. |
+| Eyelashes | `MH_Eyelashes_URP.mat` | `MHEyelashes_URP` | Eyelash color and alpha-clipped shape. |
+| Saliva | `MH_Saliva_URP.mat` | `MHSaliva_URP` | Transparent saliva surface. |
+| Cartilage | `MH_Cartilage_URP.mat` | `MHSimpleLit_URP` | Inner-eye cartilage, using the head color and normal maps. |
+
+Templates are in `Assets/MHBridge/Materials`; MHBridge shader graphs are in `Assets/MHBridge/Shaders`
+and appear under **MHBridge > HDRP** and **MHBridge > URP** in the shader menu.
 HDRP/Lit is an HDRP shader rather than an MHBridge graph.
 Each material array uses its index as the LOD and repeats its last entry for deeper LODs.
 Parts other than face skin use one template across their LODs in the shipped settings.
+
+> [!WARNING]
+> Do not edit the shipped templates and shaders under `Assets/MHBridge` in place. A package update
+> unpacks them again and overwrites your changes. Tune extracted materials, or assign copies of
+> your own in **Import Settings**.
+
 The DCC importer assigns available character textures to the copied materials.
 A bare DNA file carries no textures, so its materials retain the templates' textures.
 
@@ -57,15 +82,17 @@ For texture extraction and iris-boundary rebuilding, use the [import reference](
 
 ## Body
 
-`MH_Body.mat` uses the character's body base color, normal, and mask maps.
+The body material, `MH_Body_HDRP.mat` or `MH_Body_URP.mat`, uses the character's body base color,
+normal, and mask maps.
 Start with these maps and the material's surface settings, then check the body beside the face
 under the same lighting.
 
 ## Face skin
 
 The head materials share the face's base color, normal, and mask maps.
-The shipped LOD0 and LOD1 materials also receive animated wrinkle maps; LOD2–3 keep
-subsurface scattering, and LOD4 and deeper use the material without scattering.
+The shipped LOD0 and LOD1 materials also receive animated wrinkle maps. Under HDRP, LOD2–3 keep
+subsurface scattering, and LOD4 and deeper use the material without scattering. Under URP, one
+material without wrinkle maps covers LOD2 and deeper.
 Check your changes at each LOD because tuning one extracted material does not tune every variant.
 
 ### Wrinkle maps
@@ -74,7 +101,7 @@ OpenRig calculates the animated wrinkle weights.
 With **Apply Wrinkle Maps** enabled on `MHFace`, MHBridge passes these weights to the skin
 shader, which blends the wrinkle maps.
 If you create a custom material or shader, provide compatible wrinkle inputs and blending,
-using the shipped `MHSkin_AnimatedSS_Graph` shader as a reference.
+using the shipped `MHSkin_AnimatedSS_HDRP` or `MHSkin_Animated_URP` shader as a reference.
 
 ### Scalp mask
 
@@ -95,10 +122,11 @@ without hair.
 | **ScalpMaskPower** | `_ScalpMaskPower` | `1` | The falloff of the mask. Values above `1` pull the darkening inside the hairline and soften its edge. Values below `1` spread it toward the edge. |
 | **ScalpMaskMipBias** | `_ScalpMaskMipBias` | `1` | Extra softening when the mask is sampled. Each step doubles the blur. |
 | **ScalpSmoothness** | `_ScalpSmoothness` | `0.5` | The factor that the smoothness under the hair is multiplied by. `1` leaves it unchanged. Lower values spread the highlight wider rather than remove it, so lower **ScalpSpecular** first. |
-| **ScalpSpecular** | `_ScalpSpecular` | `0.5` | The factor that the specular reflectance under the hair is multiplied by. Lower values dim the highlight without changing its shape. LOD 0 only: the LOD 1 shader has no specular input. |
+| **ScalpSpecular** | `_ScalpSpecular` | `0.5` | The factor that the specular reflectance under the hair is multiplied by. Lower values dim the highlight without changing its shape. Under HDRP, LOD 0 only: the LOD 1 shader has no specular input. |
 
-The materials for LOD 2 and deeper have no scalp mask on purpose. At that distance the darkening
-is too small to see, and leaving it out keeps those shaders cheaper.
+The HDRP materials for LOD 2 and deeper have no scalp mask on purpose. At that distance the
+darkening is too small to see, and leaving it out keeps those shaders cheaper. Both URP face skin
+materials carry the scalp mask properties.
 
 To add the scalp mask to a shader of your own, follow these steps:
 
@@ -119,7 +147,8 @@ subgraph's **Mask** output carries the final mask, if you want to drive other in
 ## Eyes
 
 Start from the shipped material, then tune for your character and lighting. The values listed
-here are the shipped `MH_Eye.mat` defaults.
+here are the shipped `MH_Eye_HDRP.mat` defaults. `MH_Eye_URP.mat` has the same groups without the
+diffusion profile fields and without the caustics, and its shipped values can differ.
 
 ![Eye material groups and controlled-light comparison](images/05-materials/01-eye-materials.png)
 
@@ -140,7 +169,7 @@ The importer assigns these four eye texture properties:
 | **Sclera Smoothness** | `0.81` | Controls the surface highlight. Increase for a smoother, wetter appearance. |
 | **Sclera Normal** | Assigned at import | Surface detail, including blood vessels. Keep its texture type on **Normal map**. |
 | **Sclera Normal Strength** | `1` | Strength of surface detail. Reduce if vessels look too raised. |
-| **Sclera Diffusion Profile** | `MH_ScleraDiffusionProfile` | Subsurface scattering of the sclera. Assign and register this profile before tuning lighting. |
+| **Sclera Diffusion Profile** | `MH_ScleraDiffusionProfile_HDRP` | HDRP only. Subsurface scattering of the sclera. Assign and register this profile before tuning lighting. |
 
 ### Iris
 
@@ -151,7 +180,7 @@ The importer assigns these four eye texture properties:
 | **Iris Clamp Color** | Gray | Keep the shipped value while tuning iris color with **Iris Texture**. |
 | **Iris Normal** | Assigned at import | Iris surface structure used in diffuse shading. Keep its texture type on **Normal map**. |
 | **Iris Normal Strength** | `7.46` | Strength of the iris pattern's shading. Reduce if the relief looks excessive. |
-| **Iris Diffusion Profile** | `MH_IrisDiffusionProfile` | Iris scattering and caustic softness. Assign and register the iris profile. |
+| **Iris Diffusion Profile** | `MH_IrisDiffusionProfile_HDRP` | HDRP only. Iris scattering and caustic softness. Assign and register the iris profile. |
 | **Inner Radius** | `0.195` | Radius used to lay out the iris texture. Adjust texture coverage separately from the split boundary. |
 | **Iris Radius** | `0.1385` | Visible iris aperture. Adjust the iris size on the eyeball. |
 | **Iris Depth** | `0.85` | Iris depth used by refraction, clamped by the shader. Adjust while checking oblique views. |
@@ -183,6 +212,8 @@ is used. The material's minimum and maximum still define the visible endpoint si
 
 ### Caustics
 
+The caustics belong to the HDRP eye material only.
+
 | Parameter | Shipped value | Effect and use |
 |---|---|---|
 | **Caustics Offset** | `0` | Depth placement of the caustic ring. Check while changing the light direction. |
@@ -206,6 +237,10 @@ EyeShell uses alpha blending, so its tint is not a physically exact multiply of 
 beneath it. A colored tint can appear too bright in a dark scene; use black for neutral
 occlusion and inspect your result under low light.
 
+Under URP, both materials read the camera depth texture. Turn on **Depth Texture** on the URP
+asset, or click **Enable** in **Tools > MHBridge > Validate Setup**. Without it they draw as hard
+dark shapes around the eyes.
+
 ![EyeShell and EyeEdge controls](images/05-materials/02-eye-shell-edge.png)
 
 
@@ -213,26 +248,27 @@ occlusion and inspect your result under low light.
 
 ### Eyelashes
 
-`MH_Eyelashes.mat` uses HDRP/Lit with alpha clipping for the imported eyelash mesh.
+The eyelash material uses alpha clipping for the imported eyelash mesh: `MH_Eyelashes_HDRP.mat`
+with HDRP/Lit, or `MH_Eyelashes_URP.mat` with `MHEyelashes_URP`.
 The importer assigns `Eyelashes_Color` to its base color map; the texture's alpha supplies
 the clip mask. Tune this extracted material separately from cards and strand grooms.
 
 ### Cards and grooms
 
 A strand groom is not an ordinary mesh — its vertices are produced by the hair package's GPU solver
-— so an HDRP/Lit material renders nothing useful on it. Any groom material has to carry the
+— so a plain Lit material renders nothing useful on it. Any groom material has to carry the
 package's `HairVertex` subgraph node. MHBridge ships profile-specific materials in
-`Assets/MHBridge/Hair/Materials`:
+`Assets/MHBridge/Hair/Materials`, where `<Pipeline>` is `HDRP` or `URP`:
 
 | Material | Shader | Used by |
 |---|---|---|
-| `Hair_Groom.mat`, `Eyebrows_Groom.mat`, `Beard_Groom.mat`, `Mustache_Groom.mat` | `Shaders/MHGroom.shadergraph` | The strand grooms, through the profile's **Groom Material** field. |
-| `Hair_Cards.mat`, `Eyebrows_Cards.mat` | `Shaders/MHCards.shadergraph` | The hair cards, through the profile's **Card Material** field. |
+| `Hair_Groom_<Pipeline>.mat`, `Eyebrows_Groom_<Pipeline>.mat`, `Beard_Groom_<Pipeline>.mat`, `Mustache_Groom_<Pipeline>.mat` | `Shaders/MHGroom_<Pipeline>.shadergraph` | The strand grooms, through the profile's **Groom Material** field. |
+| `Hair_Cards_<Pipeline>.mat`, `Eyebrows_Cards_<Pipeline>.mat` | `Shaders/MHCards_<Pipeline>.shadergraph` | The hair cards, through the profile's **Card Material** field. |
 
-Hair and Eyebrows have dedicated cards materials. Beard and Mustache use `Hair_Cards.mat`
+Hair and Eyebrows have dedicated cards materials. Beard and Mustache use the Hair cards material
 as their fallback. Check the profile's **Card Material** field for the assignment.
-The cards materials are there from the first import. The groom material and its shader arrive with
-the sub-package, for the reason in [Unpack the groom assets](06-hair.md#unpack-the-groom-assets).
+The cards materials arrive with the material set of the active pipeline. The groom material and
+its shader arrive with the groom sub-package. See [Unpack the groom assets](06-hair.md#unpack-the-groom-assets).
 
 They expose the same parameters on purpose, so a groom and its cards can be given one look and the
 swap between them at distance does not show. The cards shader adds one option of its own,
@@ -257,21 +293,23 @@ The ones worth reaching for first:
 | **Rim Transmittance Color**, **Rim Transmittance Reach** | The light that passes through the hair from behind. This is where a groom stops looking like plastic. |
 | **Masks**, **Alpha Depth**, **Tiling** | The two tiling textures the shipped materials use for per-strand breakup and soft alpha, and the tiling applied to them. |
 | **Ambient Occlusion**, **Baked Ambient Occlusion**, **Depth Offset** | Contact shading and the depth bias that keeps strands from z-fighting the scalp. |
-| **HighQualityLineMultiplier** | Scales the strand width used by [high quality lines](06-hair.md#high-quality-lines-unity-6). It does nothing in the other renderers, and nothing below Unity 6. |
+| **HighQualityLineMultiplier** | Scales the strand width used by [high quality lines](06-hair.md#high-quality-lines-unity-6). It does nothing in the other renderers, nothing below Unity 6, and nothing under URP. |
 
 ![The same groom before and after tuning: flat default color, then a root-to-tip gradient with grey variation](images/05-materials/03-material-compare.png)
 
 ## Diffusion profiles
+
+This section applies to HDRP only.
 
 A missing profile asset or an empty material profile field needs a manual assignment.
 Read the material and field named by the issue, then assign the matching profile:
 
 | Material field | Profile asset in `Assets/MHBridge/Shaders` |
 |---|---|
-| Skin **Diffusion Profile** | `MH_Skin.asset` |
-| Teeth **Diffusion Profile** | `MH_Teeth.asset` |
-| Eye **Iris Diffusion Profile** | `MH_IrisDiffusionProfile.asset` |
-| Eye **Sclera Diffusion Profile** | `MH_ScleraDiffusionProfile.asset` |
+| Skin **Diffusion Profile** | `MH_Skin_HDRP.asset` |
+| Teeth **Diffusion Profile** | `MH_Teeth_HDRP.asset` |
+| Eye **Iris Diffusion Profile** | `MH_IrisDiffusionProfile_HDRP.asset` |
+| Eye **Sclera Diffusion Profile** | `MH_ScleraDiffusionProfile_HDRP.asset` |
 
 Assigning a profile to a material and registering it with HDRP are separate steps.
 Open **Tools > MHBridge > Validate Setup**. After assignment, click **Re-check**, then **Register** for any unregistered profile.
@@ -296,6 +334,8 @@ why it is a warning you can dismiss rather than an error.
 | The iris boundary is wrong | The automatic split needs adjustment | Use **Material > Override Iris To Sclera Point** before stripping source textures. **Apply** and **Use Automatic** rebuild the four maps and update extracted eye materials. |
 | The iris boundary override is disabled | One or both original combined eye maps are absent from the `.dcc` | Restore the original export with both `Eyes_Color` and `Eyes_Normal`. Existing split PNGs alone cannot supply this preview. |
 | Extracted eye normals look inverted | The green channel was flipped again after extraction | MHBridge already converts the maps to OpenGL convention. Undo the extra flip and keep **Texture Type** on **Normal map** and wrapping on **Clamp**. |
-| The pupil does not change size | The eye material has no `_PupilAperture` property, so the write is a silent no-op | Use `MH_Eye.mat` with `MHEye_Graph`, enable `applyPupilDilation`, and supply animation with pupil rig outputs. The shader controls pupil size relative to the material's authored neutral. |
+| The pupil does not change size | The eye material has no `_PupilAperture` property, so the write is a silent no-op | Use the shipped eye material of your pipeline, `MH_Eye_HDRP.mat` or `MH_Eye_URP.mat`, enable `applyPupilDilation`, and supply animation with pupil rig outputs. The shader controls pupil size relative to the material's authored neutral. |
+| The character renders magenta after the render pipeline changed | Its materials use the shaders of the other pipeline | Follow [Switch the render pipeline](04-import-reference.md#switch-the-render-pipeline). |
+| Dark hard shapes around the eyes under URP | **Depth Texture** is off on the URP asset | Click **Enable** on **URP renders without the depth texture** in **Validate Setup**, or enable **Rendering > Depth Texture** on the URP asset. |
 
-For skin scattering and missing profiles, use [Diffusion profiles](#diffusion-profiles).
+For skin scattering and missing profiles under HDRP, use [Diffusion profiles](#diffusion-profiles).
